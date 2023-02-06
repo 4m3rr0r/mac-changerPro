@@ -11,26 +11,26 @@ To install the script, follow these steps <br>
 
 1 Clone the repository using the following command:
     
-    git clone https://github.com/4m3rr0r/mac-cangerPro
+    git clone https://github.com/4m3rr0r/mac-changerPro
 
 2 Change the working directory to the newly cloned repository:
 
-    cd mac-cangerPro
+    cd mac-changerPro
     
 3 Make the script executable:
 
-    chmod +x mac-cangerPro
+    chmod +x mac-changerPro
 
 
 4 Move the script to `/usr/local/bin` to access it from anywhere in the system
     
-    sudo mv mac-cangerPro /usr/local/bin
+    sudo mv mac-changerPro /usr/local/bin
 
 ## Usage
 
 To run the script, use the following command:
 
-    sudo mac-cangerPro [OPTION]
+    sudo mac-changerPro [OPTION]
     
  Change the MAC address of either the eth0 or wlan0 network interface.
  
