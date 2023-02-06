@@ -1,4 +1,4 @@
-# mac-cangerPro
+# mac-changerPro
 
 This is a bash script that can change the MAC address of either the eth0 or wlan0 network interface.
 
