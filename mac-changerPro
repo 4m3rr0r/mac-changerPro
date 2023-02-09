@@ -19,11 +19,11 @@ fi
 if ! which macchanger > /dev/null;
 then
     echo ""
-    echo "\033[032m Please wait Macchanger is installing"
+    echo -e "\033[032m Please wait Macchanger is installing"
     sudo apt-get update > /dev/null;
     sudo apt-get install -y macchanger > /dev/null;
     echo ""
-    echo "\033[032m Successful Installation"
+    echo -e "\033[032m Successful Installation"
     exit 1
 fi
 
