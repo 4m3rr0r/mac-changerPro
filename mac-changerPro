@@ -12,18 +12,19 @@ banner
 if [[ $UID != 0 ]]
 then
     echo ""
-    echo -e "\033[31m Please run as root"
+    echo -e "\033[0;31m Please run as root"
+    echo ""
 exit 1
 fi
 
 if ! which macchanger > /dev/null;
 then
     echo ""
-    echo "\033[32m Please wait Macchanger is installing"
+    echo "\033[0;32m Please wait Macchanger is installing"
     sudo apt-get update > /dev/null;
     sudo apt-get install -y macchanger > /dev/null;
     echo ""
-    echo "\033[32m Successful Installation"
+    echo "\033[0;32m Successful Installation"
     exit 1
 fi
 
