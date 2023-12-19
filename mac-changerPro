@@ -2,90 +2,89 @@
 
 banner() {
   echo -e "\033[31m_________\033[0m"
-  echo -e "\033[32m|\033[0m         \033[32m|\033[0m"
+  echo -e "\033[32m|         |\033[0m"
   echo -e "\033[33m| MAC Changer Pro |\033[0m"
   echo -e "\033[34m|_________|\033[0m"
 }
 
-banner
-
-if [[ $UID != 0 ]]
-then
+check_root() {
+  if [[ $EUID -ne 0 ]]; then
     echo ""
-    echo -e "\033[031m Please run as root"
-exit 1
-fi
-
-if ! which macchanger > /dev/null;
-then
-    echo ""
-    echo -e "\033[032m Please wait Macchanger is installing"
-    sudo apt-get update > /dev/null;
-    sudo apt-get install -y macchanger > /dev/null;
-    echo ""
-    echo -e "\033[032m Successful Installation"
+    echo -e "\033[031m Please run as root\033[0m"
     exit 1
-fi
+  fi
+}
 
-if ! which mac-changerPro > /dev/null;
-then
-    sudo cp mac-changerPro /usr/local/bin > /dev/null;
+install_macchanger() {
+  if ! command -v macchanger > /dev/null; then
+    echo ""
+    echo -e "\033[032m Please wait, installing Macchanger\033[0m"
+    sudo apt-get update > /dev/null
+    sudo apt-get install -y macchanger > /dev/null
+    echo ""
+    echo -e "\033[032m Successful Installation\033[0m"
+    exit 1
+  fi
+}
+
+install_macchangerPro() {
+  if ! command -v mac-changerPro > /dev/null; then
+    sudo cp mac-changerPro /usr/local/bin > /dev/null
     sudo mac-changerPro -h
     exit 1
+  fi
+}
+
+change_mac_address() {
+  local interface=$1
+  macchanger -l > list.txt
+  ouimac=$(shuf -n 1 list.txt | awk '{print $3}')
+  uaamac=$(printf '%02x:%02x:%02x' $((RANDOM % 256)) $((RANDOM % 256)) $((RANDOM % 256)))
+  sudo ifconfig "$interface" down
+  macchanger -m "$ouimac:$uaamac" "$interface"
+  sudo ifconfig "$interface" up
+}
+
+banner
+check_root
+install_macchanger
+install_macchangerPro
+
+if [ $# -ne 1 ]; then
+  echo ""
+  echo -e "\033[31mError: Missing or too many arguments\033[0m"
+  echo ""
+  echo "Usage: $0 [-e|--eth0 | -w|--wlan0 | -h|--help]"
+  exit 1
 fi
 
-change_eth0() {
-    macchanger -l > list.txt
-    ouimac=$(shuf -n 1 list.txt | awk '{print$3}')
-    uaamac=$(printf '%02x:%02x:%02x'  $[RAMDOM%256] $[RAMDOM%256] $[RAMDOM%256])
-    sudo ifconfig eth0 down
-    macchanger -m  "$ouimac:$uaamac" eth0 
-    sudo ifconfig eth0 up
-
-}
-
-
-change_wlan0() {
-    macchanger -l > list.txt
-    ouimac=$(shuf -n 1 list.txt | awk '{print$3}')
-    uaamac=$(printf '%02x:%02x:%02x'  $[RAMDOM%256] $[RAMDOM%256] $[RAMDOM%256])
-    sudo ifconfig wlan0 down
-    macchanger -m  "$ouimac:$uaamac" wlan0 
-    sudo ifconfig wlan0 up
-}
-
-
-if [[ ${1} == "-h" ]] || [[ ${1} == "--help" ]]
-then  echo ""
+case $1 in
+  -e | --eth0)
+    echo ""
+    echo -e "\033[35mChanging the MAC address of the eth0 interface\033[0;32m"
+    change_mac_address "eth0"
+    ;;
+  -w | --wlan0)
+    echo ""
+    echo -e "\033[36mChanging the MAC address of the wlan0 interface\033[0;32m"
+    change_mac_address "wlan0"
+    ;;
+  -h | --help)
     echo ""
     echo "Usage: $0 [OPTION]"
     echo ""
-    echo ""
     echo "Change the MAC address of either the eth0 or wlan0 network interface."
-    echo ""
     echo ""
     echo "  -e, --eth0         Change the MAC address of the eth0 interface"
     echo "  -w, --wlan0        Change the MAC address of the wlan0 interface"
     echo "  -h, --help         Display this help menu"
     exit
-elif [[ ${1} == "-e" ]] || [[ ${1} == "--eth0" ]]
-then 
-    echo ""
-    echo ""
-    echo -e "\033[35mChanging the MAC address of the eth0 interface\033[0;32m"
-    change_eth0
-
-elif [ "$1" == "-w" ] || [ "$1" == "--wlan0" ]
-then
-    echo ""
-    echo ""
-    echo -e "\033[36mChanging the MAC address of the wlan0 interface\033[0;32m"
-    change_wlan0
-
-else
+    ;;
+  *)
     echo ""
     echo -e "\033[31mError: Invalid option\033[0m"
     echo ""
     echo "Try '$0 -h or --help' for more information."
     exit 1
-fi
+    ;;
+esac
