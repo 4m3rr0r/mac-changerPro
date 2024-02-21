@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# name   : mac-changerPro
+# url    : https://github.com/4m3rr0r/mac-changerPro
+# author : 4m3rr0r
+
+
 banner() {
   echo -e "\033[31m_________\033[0m"
   echo -e "\033[32m|         |\033[0m"
@@ -45,46 +50,49 @@ change_mac_address() {
   sudo ifconfig "$interface" up
 }
 
+show_help() {
+  echo ""
+  echo "Usage: $0 -i <interface>"
+  echo ""
+  echo "Change the MAC address of the specified network interface."
+  echo ""
+  echo "Options:"
+  echo "  -i, --interface    Specify the network interface (e.g., eth0, wlan0 etc)"
+  echo "  -h, --help         Display this help menu"
+  exit 1
+}
+
 banner
 check_root
 install_macchanger
 install_macchangerPro
 
-if [ $# -ne 1 ]; then
-  echo ""
-  echo -e "\033[31mError: Missing or too many arguments\033[0m"
-  echo ""
-  echo "Usage: $0 [-e|--eth0 | -w|--wlan0 | -h|--help]"
-  exit 1
+if [ $# -eq 0 ]; then
+  show_help
 fi
 
-case $1 in
-  -e | --eth0)
-    echo ""
-    echo -e "\033[35mChanging the MAC address of the eth0 interface\033[0;32m"
-    change_mac_address "eth0"
-    ;;
-  -w | --wlan0)
-    echo ""
-    echo -e "\033[36mChanging the MAC address of the wlan0 interface\033[0;32m"
-    change_mac_address "wlan0"
-    ;;
-  -h | --help)
-    echo ""
-    echo "Usage: $0 [OPTION]"
-    echo ""
-    echo "Change the MAC address of either the eth0 or wlan0 network interface."
-    echo ""
-    echo "  -e, --eth0         Change the MAC address of the eth0 interface"
-    echo "  -w, --wlan0        Change the MAC address of the wlan0 interface"
-    echo "  -h, --help         Display this help menu"
-    exit
-    ;;
-  *)
-    echo ""
-    echo -e "\033[31mError: Invalid option\033[0m"
-    echo ""
-    echo "Try '$0 -h or --help' for more information."
-    exit 1
-    ;;
-esac
+while [ "$#" -gt 0 ]; do
+  case $1 in
+    -i | --interface)
+      shift
+      if [ -z "$1" ]; then
+        echo ""
+        echo -e "\033[31mError: Missing argument for -i option\033[0m"
+        show_help
+      fi
+      interface_name=$1
+      echo ""
+      echo -e "\033[35mChanging the MAC address of the $interface_name interface\033[0;32m"
+      change_mac_address "$interface_name"
+      ;;
+    -h | --help)
+      show_help
+      ;;
+    *)
+      echo ""
+      echo -e "\033[31mError: Invalid option\033[0m"
+      show_help
+      ;;
+  esac
+  shift
+done

@@ -1,8 +1,9 @@
 # mac-changerPro
 
-This is a bash script that can change the MAC address of either the eth0 or wlan0 network interface.
+This bash script allows you to change the MAC address of a specified network interface.
 
-### Requirements <br/>
+
+### Requirements
 • macchanger
 
 ### Installation
@@ -30,14 +31,12 @@ To install the script, follow these steps <br>
 
 To run the script, use the following command:
 
-    sudo mac-changerPro [OPTION]
+    sudo mac-changerPro [OPTION] 
     
  Change the MAC address of either the eth0 or wlan0 network interface.
  
  ### Options
-      
-      -e, --eth0         Change the MAC address of the eth0 interface
-      -w, --wlan0        Change the MAC address of the wlan0 interface 
+      -i, --interface    Specify the network interface (e.g., eth0, wlan0 etc)  
       -h, --help         Display this help menu
 
       
